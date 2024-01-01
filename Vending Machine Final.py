@@ -1,8 +1,22 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Jan  1 15:31:35 2024
+
+@author: natha
+"""
+
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Dec 28 23:52:17 2023
+
+@author: natha
+"""
+
 from datetime import datetime
 
 class VendingMachine:
     def __init__(self):
-        #Create a dictionary for a vending machine that will input a menu, price and remaining stock
+        # Create a dictionary for a vending machine that will input a menu, price, and remaining stock
         self.menu = {
             'Drinks': {
                 'A1': {'item': 'Coca-Cola', 'price': 1.50, 'stock': 10},
@@ -25,14 +39,15 @@ class VendingMachine:
                 'B6': {'item': 'M&M\'s', 'price': 1.80, 'stock': 9},
                 'B7': {'item': 'Bugles', 'price': 1.25, 'stock': 10},
                 'B8': {'item': 'Pringles', 'price': 15.50, 'stock': 10},
-                'B9': {'item': 'Croisant', 'price': 2.75, 'stock': 10},
+                'B9': {'item': 'Croissant', 'price': 2.75, 'stock': 10},
                 'B10': {'item': 'Cookies', 'price': 12.50, 'stock': 10},
             },
-        }#prompting the remaining money and purchase history
-        self.remaining_money = 0
-        self.purchase_history = []
-#make a function that will display the main vending machine manu layout
-    def display_menu(self):
+        }  # Prompting the remaining money and purchase history
+        self.remaining = 0
+        self.data = []
+
+    # Make a function that will display the main vending machine menu layout
+    def display(self):
         print("\n----- Vending Machine Menu -----\n")
         for category, items in self.menu.items():
             print(f"{category}:\n")
@@ -40,20 +55,21 @@ class VendingMachine:
             for code, details in items.items():
                 print("{:<5} {:<20} AED {:<10} {:<5}".format(code, details['item'], details['price'], details['stock']))
             print()
-    
-#creating a function that will ask the user to insert their money into the vending machine
-    def insert_money(self):
+
+    # Creating a function that will ask the user to insert their money into the vending machine
+    def transaction(self):
         while True:
             try:
                 self.remaining_money = float(input("\nWelcome to Nathan's Vending Machine!\nPlease insert money in AED: "))
-                if self.remaining_money < 0:
+                if self.remaining < 0:
                     print("Please insert a positive amount.")
                 else:
                     break
             except ValueError:
                 print("Invalid input. Please enter a valid amount.")
-#i also created a function that will ask the user to put the item code for the product that they want
-    def select_item(self):
+
+    # I also created a function that will ask the user to put the item code for the product that they want
+    def itemselect(self):
         while True:
             code = input("\nEnter the code of the item you want to purchase (or 'exit' to exit): ")
             if code.lower() == 'exit':
@@ -62,8 +78,9 @@ class VendingMachine:
                 return code
             else:
                 print("Invalid code. Please enter a valid code.")
-#this function will tell the user that their product is now dispensing. i also made an if condition that will tell the user that they have insufficient funds.
-    def process_purchase(self, code):
+
+    # This function will tell the user that their product is now dispensing. I also made an if condition that will tell the user that they have insufficient funds.
+    def processing(self, code):
         for category, items in self.menu.items():
             if code in items:
                 item = items[code]
@@ -75,25 +92,27 @@ class VendingMachine:
                     print("Now processing...")
                     change = self.remaining_money - item['price']
                     item['stock'] -= 1
-                    self.purchase_history.append({'item': item['item'], 'price': item['price']})
+                    self.data.append({'item': item['item'], 'price': item['price']})
                     print(f"Dispensing {item['item']}...")
                     print(f"Change: AED {change:.2f}")
                     self.remaining_money -= item['price']
 
-    def suggest_purchase(self):
-        if len(self.purchase_history) >= 2:
-            last_purchase = self.purchase_history[-1]['item']
-            previous_purchase = self.purchase_history[-2]['item']
+    def suggestion(self):
+        if len(self.data) >= 2:
+            last_purchase = self.data[-1]['item']
+            previous_purchase = self.data[-2]['item']
             if last_purchase == 'Coffee' and previous_purchase != 'Biscuits':
                 print("How about adding some biscuits to go with your coffee?")
-# function that will help Checking and warning about items that are out of stock
-    def check_stock(self):
+
+    # Function that will help check and warn about items that are out of stock
+    def checkstock(self):
         for items in self.menu.values():
             for item in items.values():
                 if item['stock'] == 0:
                     print(f"Warning: {item['item']} is out of stock!")
-# this function is used to ask the user if he want to add more items
-    def buy_more(self):
+
+    # This function is used to ask the user if he wants to add more items
+    def another(self):
         while True:
             choice = input("\nDo you want to buy more items? (yes/no): ").lower()
             if choice == 'yes':
@@ -102,35 +121,38 @@ class VendingMachine:
                 return False
             else:
                 print("Invalid choice. Please enter 'yes' or 'no'.")
-#this function is used to print receipt. i also imported the current time and date for a real time tracking
-    def print_receipt(self):
+
+    # This function is used to print a receipt. I also imported the current time and date for real-time tracking
+    def receipt(self):
         now = datetime.now()
-        date_time = now.strftime("%Y-%m-%d %H:%M:%S")
+        formatted_datetime = now.strftime("%Y-%m-%d %H:%M:%S")
 
         print("\n----- Receipt -----\n")
-        print(f"Nathan's Vending Machine - {date_time}")
+        print(f"Nathan's Vending Machine - {formatted_datetime}")
         print("\nItem\t\tPrice")
         total_price = 0
-        for purchase in self.purchase_history:
+        for purchase in self.data:
             print(f"{purchase['item']}\t\tAED {purchase['price']:.2f}")
             total_price += purchase['price']
         print("\nTotal Price:\tAED {:.2f}".format(total_price))
+
         print("\nThank you for using Nathan's Vending Machine!")
-#the last function will ask the user if they want to print the receipt or to "go green"
+
+    # the last function will ask the user if they want to print the receipt or to "go green"
     def run(self):
         while True:
-            self.display_menu()
-            self.insert_money()
-            selected_item = self.select_item()
+            self.display()
+            self.transaction()
+            selected_item = self.itemselect()
 
             if selected_item is None:
                 break
 
-            self.process_purchase(selected_item)
-            self.suggest_purchase()
-            self.check_stock()
+            self.processing(selected_item)
+            self.suggestion()
+            self.checkstock()
 
-            if not self.buy_more():
+            if not self.another():
                 break
 
         print("\nDo you want to print the receipt?")
@@ -139,8 +161,7 @@ class VendingMachine:
         choice = input("Enter your choice (1 or 2): ")
 
         if choice == '1':
-            self.print_receipt()
-
+            self.receipt()
 
 if __name__ == "__main__":
     vending_machine = VendingMachine()
